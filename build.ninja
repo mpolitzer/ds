@@ -30,3 +30,6 @@ build tz_map-t:   ld tz_map-t.o
 
 build tz_array-t.o: cc tz_array-t.c
 build tz_array-t:   ld tz_array-t.o
+
+build tz_string-t.o: cc tz_string-t.c
+build tz_string-t:   ld tz_string-t.o

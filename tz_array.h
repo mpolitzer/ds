@@ -17,6 +17,7 @@
  * - dropn        -   O(n).
  * - dropn_ord    -   O(n) from point of removal to end of array. */
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,18 +59,14 @@ typedef T {
 /** Create an array by value
  *
  * @param elm_size - size in bytes for each element in the array
- * @note           - the user must garantee that no tz_array function that way
- *                   realloc will be called
- * @note           - garanteed that no alocation happens here! */
+ * @note           - it is garanteed that no alocation happens here! */
 TZ_STD_ARRAY_M T tz_array_create(size_t elm_size);
 
 /** Initialize an alocated array (equivalent to create)
  *
  * @param me       - alocated array
  * @param elm_size - size in bytes for each element in the array
- * @note           - the user must garantee that no tz_array function that way
- *                   realloc will be called
- * @note           - garanteed that no alocation happens here! */
+ * @note           - it is garanteed that no alocation happens here! */
 TZ_STD_ARRAY_M void tz_array_init(T *me, size_t elm_size);
 
 /** Create an array by value from initial values.
@@ -82,7 +79,7 @@ TZ_STD_ARRAY_M void tz_array_init(T *me, size_t elm_size);
  * @param elm_size - size of a single element in p.
  *
  * @note           - pointers 'p' on the stack are very tricky to use correcly.
- * @note           - garanteed that no alocation happens here! */
+ * @note           - it is garanteed that no alocation happens here! */
 TZ_STD_ARRAY_M T tz_array_build(void *p, uint32_t n, size_t elm_size);
 
 /* Destroy the array
@@ -135,6 +132,13 @@ TZ_STD_ARRAY_M void tz_array_pushn_data(T *me, uint32_t n, void *in);
 TZ_STD_ARRAY_M uint32_t tz_array_popn(T *me, uint32_t n);
 #define tz_array_pop(me) tz_array_popn(me, 1)
 
+/* Pop n elements from the end and store them on out.
+ *
+ * @me  - array instance.
+ * @n   - amount of elements to remove (from the end).
+ * @out - store bytes into out.
+ *
+ * @note   - This will invalidate pointers */
 TZ_STD_ARRAY_M uint32_t tz_array_popn_data(T *me, uint32_t n, void *out);
 
 /* Get a pointer to the element[i]

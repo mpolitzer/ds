@@ -74,6 +74,7 @@ tz_unit_test__should_pass(
 TZ_UNIT_TEST_M int
 tz_unit_test_report(void)
 {
+	printf("\n");
 	return tz_unit_test_total - tz_unit_test_passed;
 }
 
