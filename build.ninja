@@ -1,0 +1,32 @@
+# -----------------------------------------------------------------------------
+cc      = ${prefix}gcc
+as      = ${prefix}as
+ld      = ${prefix}ld
+ar      = ${prefix}ar
+size    = ${prefix}size
+objcopy = ${prefix}objcopy
+objdump = ${prefix}objdump
+
+cflags  = -flto -g -Wall -std=c99 -I. -O2 -march=native
+ldlibs  = -flto -lm
+
+rule cc
+  command = $cc -MMD -MF $out.d $cflags -c $in -o $out
+  description = CC $out
+  depfile = $out.d
+  deps = gcc
+
+rule ld
+  command = $cc $ldlibs $in -o $out
+  description = LD $out
+
+# -----------------------------------------------------------------------------
+
+build tz_unit_test-t.o: cc tz_unit_test-t.c
+build tz_unit_test-t:   ld tz_unit_test-t.o
+
+build tz_map-t.o: cc tz_map-t.c
+build tz_map-t:   ld tz_map-t.o
+
+build tz_array-t.o: cc tz_array-t.c
+build tz_array-t:   ld tz_array-t.o
