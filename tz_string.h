@@ -1,6 +1,7 @@
 #ifndef TZ_STD_STRING_H
 #define TZ_STD_STRING_H
 #include <stdarg.h>
+#include <ctype.h>
 /* includes-here */
 
 #ifdef TZ_STD_STRING_INLINE
@@ -27,7 +28,9 @@ typedef tz_array tz_string; // type alias
 /** Create an array by value */
 TZ_STD_STRING_M T    tz_string_create(void);
 TZ_STD_STRING_M void tz_string_format(T *me, const char *fmt, ...);
-
+TZ_STD_STRING_M void tz_string_toupper(T *me);
+TZ_STD_STRING_M void tz_string_tolower(T *me);
+TZ_STD_STRING_M void tz_string_capitalize(T *me);
 
 #ifdef TZ_STD_STRING_DECLARATIONS
 
@@ -53,6 +56,24 @@ TZ_STD_STRING_M void tz_string_format(T *me, const char *fmt, ...)
 	}
 
 	va_end(ap);
+}
+
+TZ_STD_STRING_M void tz_string_toupper(T *me)
+{
+	for (uint32_t i=0; i<me->n; ++i)
+		me->p[i] = toupper(me->p[i]);
+}
+
+TZ_STD_STRING_M void tz_string_tolower(T *me)
+{
+	for (uint32_t i=0; i<me->n; ++i)
+		me->p[i] = toupper(me->p[i]);
+}
+
+TZ_STD_STRING_M void tz_string_capitalize(T *me)
+{
+	if (me->n)
+		me->p[0] = toupper(me->p[0]);
 }
 
 #endif /* TZ_STD_STRING_DECLARATIONS */
