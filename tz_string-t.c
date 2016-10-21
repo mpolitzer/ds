@@ -15,14 +15,13 @@ void check_format()
 	tz_unit_test_should_pass(strncmp(expected, (char *)s.p, s.n) == 0);
 }
 
-void check_capitalize()
+void check_toupper()
 {
 	char *input    = "hello world";
-	char *expected = "Hello world";
+	char *expected = "HELLO WORLD";
 
 	tz_string s = tz_string_create();
-	tz_array_pushn_data(&s, strlen(input), input);
-	tz_string_capitalize(&s);
+	tz_string_toupper_s(&s, input);
 
 	tz_unit_test_should_pass(strncmp(expected, (char *)s.p, s.n) == 0);
 }
@@ -31,6 +30,7 @@ int main(int argc, char const* argv[])
 {
 	tz_unit_test_start(argv[0]);
 	check_format();
-	check_capitalize();
+	check_toupper();
+//	check_capitalize();
 	return tz_unit_test_report();
 }

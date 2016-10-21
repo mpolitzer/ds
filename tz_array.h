@@ -271,6 +271,9 @@ TZ_STD_ARRAY_M bool tz_array_reserve(T *me, uint32_t newmax)
 	size_t elm_size = tz_array__elm_size(me);
 	void *newp = NULL;
 
+	if (newmax < me->max)
+		return true;
+
 	if ((newp = realloc(me->p, newmax * elm_size))) {
 		me->p = newp;
 		me->max = newmax;

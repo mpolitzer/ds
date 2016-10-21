@@ -25,12 +25,16 @@
 
 typedef tz_array tz_string; // type alias
 
+#define TZ_STRING_TO_FMT "%.*s"
+#define tz_string_to_fmt(s) (s)->n, (s)->p
+
 /** Create an array by value */
-TZ_STD_STRING_M T    tz_string_create(void);
-TZ_STD_STRING_M void tz_string_format(T *me, const char *fmt, ...);
-TZ_STD_STRING_M void tz_string_toupper(T *me);
-TZ_STD_STRING_M void tz_string_tolower(T *me);
-TZ_STD_STRING_M void tz_string_capitalize(T *me);
+TZ_STD_STRING_M T  tz_string_create   (void);
+TZ_STD_STRING_M T  tz_string_create_s (const char *s);
+TZ_STD_STRING_M T  tz_string_dup      (T *me);
+TZ_STD_STRING_M T *tz_string_format   (T *me, const char *fmt, ...);
+TZ_STD_STRING_M T *tz_string_toupper  (T *me);
+TZ_STD_STRING_M T *tz_string_toupper_s(T *me, const char *s);
 
 #ifdef TZ_STD_STRING_DECLARATIONS
 
@@ -39,14 +43,21 @@ TZ_STD_STRING_M T tz_string_create(void)
 	return tz_array_create(sizeof(char));
 }
 
-TZ_STD_STRING_M T tz_string_dup(T *me)
+TZ_STD_STRING_M T tz_string_create_s(const char *s)
 {
-	T s = tz_string_create();
-	tz_array_pusn_data(&s, me->n, me->p);
-	return s;
+	T me = tz_string_create();
+	tz_array_pushn_data(&me, strlen(s), &s);
+	return me;
 }
 
-TZ_STD_STRING_M void tz_string_format(T *me, const char *fmt, ...)
+TZ_STD_STRING_M T tz_string_dup(T *me)
+{
+	T new = tz_string_create();
+	tz_array_pushn_data(&new, me->n, me->p);
+	return new;
+}
+
+TZ_STD_STRING_M T *tz_string_format(T *me, const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -64,31 +75,39 @@ TZ_STD_STRING_M void tz_string_format(T *me, const char *fmt, ...)
 	}
 
 	va_end(ap);
+	return me;
 }
 
-TZ_STD_STRING_M void tz_string_toupper(T *me)
+TZ_STD_STRING_M T *tz_string_toupper(T *me)
 {
 	for (uint32_t i=0; i<me->n; ++i)
 		me->p[i] = toupper(me->p[i]);
+	return me;
 }
 
-TZ_STD_STRING_M void tz_string_toupper_s(T *me)
+TZ_STD_STRING_M T *tz_string_toupper_s(T *me, const char *s)
 {
+	size_t n = strlen(s);
+	tz_array_reserve(me, n);
+	me->n = n;
+
 	for (uint32_t i=0; i<me->n; ++i)
-		me->p[i] = toupper(me->p[i]);
+		me->p[i] = toupper(s[i]);
+
+	return me;
 }
 
-TZ_STD_STRING_M T tz_string_tolower(T *me)
-{
-	for (uint32_t i=0; i<me->n; ++i)
-		me->p[i] = toupper(me->p[i]);
-}
-
-TZ_STD_STRING_M void tz_string_capitalize(T *me)
-{
-	if (me->n)
-		me->p[0] = toupper(me->p[0]);
-}
+//TZ_STD_STRING_M T tz_string_tolower(T *me)
+//{
+//	//for (uint32_t i=0; i<me->n; ++i)
+//	//	me->p[i] = toupper(me->p[i]);
+//}
+//
+//TZ_STD_STRING_M T tz_string_capitalize(T *me)
+//{
+//	//if (me->n)
+//	//	me->p[0] = toupper(me->p[0]);
+//}
 
 #endif /* TZ_STD_STRING_DECLARATIONS */
 #undef T
