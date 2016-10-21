@@ -34,8 +34,16 @@ TZ_STD_STRING_M void tz_string_capitalize(T *me);
 
 #ifdef TZ_STD_STRING_DECLARATIONS
 
-TZ_STD_STRING_M T tz_string_create(void) {
+TZ_STD_STRING_M T tz_string_create(void)
+{
 	return tz_array_create(sizeof(char));
+}
+
+TZ_STD_STRING_M T tz_string_dup(T *me)
+{
+	T s = tz_string_create();
+	tz_array_pusn_data(&s, me->n, me->p);
+	return s;
 }
 
 TZ_STD_STRING_M void tz_string_format(T *me, const char *fmt, ...)
@@ -64,7 +72,13 @@ TZ_STD_STRING_M void tz_string_toupper(T *me)
 		me->p[i] = toupper(me->p[i]);
 }
 
-TZ_STD_STRING_M void tz_string_tolower(T *me)
+TZ_STD_STRING_M void tz_string_toupper_s(T *me)
+{
+	for (uint32_t i=0; i<me->n; ++i)
+		me->p[i] = toupper(me->p[i]);
+}
+
+TZ_STD_STRING_M T tz_string_tolower(T *me)
 {
 	for (uint32_t i=0; i<me->n; ++i)
 		me->p[i] = toupper(me->p[i]);
