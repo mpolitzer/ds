@@ -29,12 +29,13 @@ typedef tz_array tz_string; // type alias
 #define tz_string_to_fmt(s) (s)->n, (s)->p
 
 /** Create an array by value */
-TZ_STD_STRING_M T  tz_string_create   (void);
-TZ_STD_STRING_M T  tz_string_create_s (const char *s);
-TZ_STD_STRING_M T  tz_string_dup      (T *me);
-TZ_STD_STRING_M T *tz_string_format   (T *me, const char *fmt, ...);
-TZ_STD_STRING_M T *tz_string_toupper  (T *me);
-TZ_STD_STRING_M T *tz_string_toupper_s(T *me, const char *s);
+TZ_STD_STRING_M T    tz_string_create     (void);
+TZ_STD_STRING_M T    tz_string_create_s   (const char *s);
+TZ_STD_STRING_M void tz_string_destroy    (T *me);
+TZ_STD_STRING_M T    tz_string_dup        (T *me);
+TZ_STD_STRING_M T   *tz_string_format     (T *me, const char *fmt, ...);
+TZ_STD_STRING_M T   *tz_string_toupper    (T *me);
+TZ_STD_STRING_M T   *tz_string_toupper_s  (T *me, const char *s);
 
 #ifdef TZ_STD_STRING_DECLARATIONS
 
@@ -48,6 +49,11 @@ TZ_STD_STRING_M T tz_string_create_s(const char *s)
 	T me = tz_string_create();
 	tz_array_pushn_data(&me, strlen(s), &s);
 	return me;
+}
+
+TZ_STD_STRING_M void tz_string_destroy  (T *me)
+{
+	tz_array_destroy(me);
 }
 
 TZ_STD_STRING_M T tz_string_dup(T *me)
@@ -68,7 +74,7 @@ TZ_STD_STRING_M T *tz_string_format(T *me, const char *fmt, ...)
 		va_list ap_;
 		va_start(ap_, fmt);
 		tz_array_pushnz(me, n-me->max);
-		me->n = vsnprintf((char *)me->p, me->max, fmt, ap_);
+		me->n = vsnprintf((char *)me->p, me->max, fmt, ap_)+1;
 		va_end(ap_);
 	} else {
 		me->n = n;
@@ -82,6 +88,13 @@ TZ_STD_STRING_M T *tz_string_toupper(T *me)
 {
 	for (uint32_t i=0; i<me->n; ++i)
 		me->p[i] = toupper(me->p[i]);
+	return me;
+}
+
+TZ_STD_STRING_M T *tz_string_tolower(T *me)
+{
+	for (uint32_t i=0; i<me->n; ++i)
+		me->p[i] = tolower(me->p[i]);
 	return me;
 }
 
