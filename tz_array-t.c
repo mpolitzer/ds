@@ -4,16 +4,6 @@
 #define TZ_DS_ARRAY_INLINE
 #include "tz_array.h"
 
-#if 0
-static void print_as_int(struct tz_array_t *a)
-{
-	printf("\n");
-	tz_array_print(a);
-	for (int i=0; i<tz_array_length(a); ++i)
-		printf("%d, ", *(int *)tz_array_sub_i(a, i));
-}
-#endif
-
 static void test_indexation(void) {
 	bool eq=true;
 	int is[4] = { 0, 1, 2, 3 };
@@ -283,6 +273,14 @@ static void test_swap(void) {
 	tz_unit_test_should_pass(eq);
 }
 
+static void test_clear(void) {
+	int is[4] = { 0, 1, 2, 3 };
+	struct tz_array_t a = tz_array_build(is, 4, sizeof(int));
+
+	tz_array_clear(&a);
+	tz_unit_test_should_pass(tz_array_length(&a) == 0);
+}
+
 int main(int argc, const char *argv[])
 {
 	tz_unit_test_start(argv[0]);
@@ -298,8 +296,7 @@ int main(int argc, const char *argv[])
 	test_ins2();
 	test_drop();
 	test_drop_ord();
-	printf("\n");
-
+	test_clear();
 
 	return tz_unit_test_report();
 }

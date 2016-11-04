@@ -15,7 +15,8 @@
  * - moven        -   O(n).
  * - insn         -   O(n) from point of insertion to end of array.
  * - dropn        -   O(n).
- * - dropn_ord    -   O(n) from point of removal to end of array. */
+ * - dropn_ord    -   O(n) from point of removal to end of array.
+ * - clear        -   O(1). */
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -210,6 +211,9 @@ TZ_DS_ARRAY_M uint32_t tz_array_dropn(T *me, uint32_t n, uint32_t i);
  * @note - This will mantain sort property */
 TZ_DS_ARRAY_M uint32_t tz_array_dropn_ord(T *me, uint32_t n, uint32_t i);
 #define tz_array_drop_ord(me, i) tz_array_dropn_ord(me, 1, i)
+
+/* Make it empty */
+TZ_DS_ARRAY_M void tz_array_clear(T *me);
 
 /* Swap elements [i,i+n) with element [j,j+n)
  *
@@ -420,6 +424,11 @@ TZ_DS_ARRAY_M uint32_t tz_array_dropn_ord(T *me, uint32_t n, uint32_t i)
 	uint32_t len = tz_array__len(me);
 	tz_array_moven(me, len - (i + n), i + n, i);
 	return tz_array_popn(me, n);
+}
+
+TZ_DS_ARRAY_M void tz_array_clear(T *me)
+{
+	tz_array__len(me) = 0;
 }
 
 TZ_DS_ARRAY_M void tz_array_swapn(T *me, uint32_t n, uint32_t i, uint32_t j)
