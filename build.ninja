@@ -34,5 +34,5 @@ build bin/tz_array-t: ld o/tz_array-t.o
 build o/tz_string-t.o: cc tz_string-t.c
 build bin/tz_string-t: ld o/tz_string-t.o
 
-build o/tz_queue-t.o: cc tz_queue-t.c
-build bin/tz_queue-t: ld o/tz_queue-t.o
+build o/tz_jobs-t.o: cc tz_jobs-t.c
+build bin/tz_jobs-t: ld o/tz_jobs-t.o
