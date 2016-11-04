@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define TZ_STD_MAP_INLINE
+#define TZ_DS_MAP_INLINE
 #include "tz_map.h"
 
 uint32_t int_hash(uint64_t u)

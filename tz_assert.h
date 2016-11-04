@@ -1,27 +1,27 @@
-#ifndef TZ_STD_ASSERT_H
-#define TZ_STD_ASSERT_H
+#ifndef TZ_DS_ASSERT_H
+#define TZ_DS_ASSERT_H
 #include <stdio.h>
 #include <signal.h>
 
-#ifdef TZ_STD_ASSERT_INLINE
-#  define TZ_STD_ASSERT_M static inline
-#  define TZ_STD_ASSERT_DECLARATIONS
+#ifdef TZ_DS_ASSERT_INLINE
+#  define TZ_DS_ASSERT_M static inline
+#  define TZ_DS_ASSERT_DECLARATIONS
 #else
-#  define TZ_STD_ASSERT_M extern
+#  define TZ_DS_ASSERT_M extern
 #endif
 /* tz-includes-here */
 
 #define tz_assert(exp) tz_assert_(exp, #exp, __func__, __FILE__, __LINE__)
-TZ_STD_ASSERT_M void tz_assert_(
+TZ_DS_ASSERT_M void tz_assert_(
 		int passed,
 		const char *exp,
 		const char *func,
 		const char *file,
 		int line);
 
-#ifdef TZ_STD_ASSERT_DECLARATIONS
+#ifdef TZ_DS_ASSERT_DECLARATIONS
 
-TZ_STD_ASSERT_M void tz_assert_(
+TZ_DS_ASSERT_M void tz_assert_(
 		int passed,
 		const char *exp,
 		const char *func,
@@ -35,7 +35,7 @@ TZ_STD_ASSERT_M void tz_assert_(
 	}
 }
 
-#endif /* TZ_STD_ASSERT_DECLARATIONS */
+#endif /* TZ_DS_ASSERT_DECLARATIONS */
 #undef T
-#endif /* TZ_STD_ASSERT_H */
+#endif /* TZ_DS_ASSERT_H */
 

@@ -1,5 +1,5 @@
-#ifndef TZ_STD_MAP_H
-#define TZ_STD_MAP_H
+#ifndef TZ_DS_MAP_H
+#define TZ_DS_MAP_H
 /* Implementation of the hopscotch hashmap
  * The values are stored outside the structure.
  *
@@ -17,16 +17,16 @@
 #include <string.h>
 /* includes-here */
 
-#ifdef TZ_STD_MAP_INLINE
-#  define TZ_STD_MAP_M static inline
-#  define TZ_STD_MAP_DECLARATIONS
+#ifdef TZ_DS_MAP_INLINE
+#  define TZ_DS_MAP_M static inline
+#  define TZ_DS_MAP_DECLARATIONS
 
-#  ifndef TZ_STD_UTIL_INLINE
-#    define TZ_STD_UTIL_INLINE TZ_STD_MAP_INLINE
+#  ifndef TZ_DS_UTIL_INLINE
+#    define TZ_DS_UTIL_INLINE TZ_DS_MAP_INLINE
 #  endif
 
 #else
-#  define TZ_STD_MAP_M extern
+#  define TZ_DS_MAP_M extern
 #endif
 /* tz-includes-here */
 
@@ -46,18 +46,18 @@ T {
 	uint32_t n, max;
 };
 
-TZ_STD_MAP_M void  tz_map_init   (T *me, tz_map_hash hash, tz_map_cmp cmp);
-TZ_STD_MAP_M T     tz_map_create (tz_map_hash hash, tz_map_cmp cmp);
-TZ_STD_MAP_M void  tz_map_destroy(T *me);
+TZ_DS_MAP_M void  tz_map_init   (T *me, tz_map_hash hash, tz_map_cmp cmp);
+TZ_DS_MAP_M T     tz_map_create (tz_map_hash hash, tz_map_cmp cmp);
+TZ_DS_MAP_M void  tz_map_destroy(T *me);
 
-TZ_STD_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val);
-TZ_STD_MAP_M uint64_t *tz_map_get(T *me, uint64_t key);
-TZ_STD_MAP_M bool      tz_map_rm (T *me, uint64_t key);
+TZ_DS_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val);
+TZ_DS_MAP_M uint64_t *tz_map_get(T *me, uint64_t key);
+TZ_DS_MAP_M bool      tz_map_rm (T *me, uint64_t key);
 
-TZ_STD_MAP_M void     tz_map_rehash(T *me, uint32_t max);
-TZ_STD_MAP_M void     tz_map_print_all(T *me);
+TZ_DS_MAP_M void     tz_map_rehash(T *me, uint32_t max);
+TZ_DS_MAP_M void     tz_map_print_all(T *me);
 
-#ifdef TZ_STD_MAP_DECLARATIONS
+#ifdef TZ_DS_MAP_DECLARATIONS
 static inline uint64_t *tz_map__keys(T *me);
 static inline uint64_t *tz_map__vals(T *me);
 static inline uint64_t *tz_map__hops(T *me);
@@ -68,7 +68,7 @@ static inline uint32_t tz_map__find_slot(T *me, uint64_t lookup, uint32_t s);
 static inline uint32_t tz_map__distance_to_first_empty_slot(T *me, uint32_t s);
 static inline void     tz_map__resize(T *me, uint64_t n);
 
-TZ_STD_MAP_M T tz_map_create(tz_map_hash hash, tz_map_cmp cmp)
+TZ_DS_MAP_M T tz_map_create(tz_map_hash hash, tz_map_cmp cmp)
 {
 	return (T){
 		.hash= hash,
@@ -76,7 +76,7 @@ TZ_STD_MAP_M T tz_map_create(tz_map_hash hash, tz_map_cmp cmp)
 	};
 }
 
-TZ_STD_MAP_M void tz_map_init(T *me, tz_map_hash hash, tz_map_cmp cmp)
+TZ_DS_MAP_M void tz_map_init(T *me, tz_map_hash hash, tz_map_cmp cmp)
 {
 	me->hash = hash;
 	me->cmp  = cmp;
@@ -84,12 +84,12 @@ TZ_STD_MAP_M void tz_map_init(T *me, tz_map_hash hash, tz_map_cmp cmp)
 	me->max  = 0;
 }
 
-TZ_STD_MAP_M void tz_map_destroy(T *me)
+TZ_DS_MAP_M void tz_map_destroy(T *me)
 {
 	//free(me->bs);
 }
 
-TZ_STD_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val)
+TZ_DS_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val)
 {
 	if (me->max == 0) {
 		tz_map__resize(me, 7);
@@ -143,7 +143,7 @@ TZ_STD_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val)
 	return &tz_map__vals(me)[pd];
 }
 
-TZ_STD_MAP_M uint64_t *tz_map_get(T *me, uint64_t key)
+TZ_DS_MAP_M uint64_t *tz_map_get(T *me, uint64_t key)
 {
 	uint32_t hash  = me->hash(key),
 		 start = hash % me->max;
@@ -152,7 +152,7 @@ TZ_STD_MAP_M uint64_t *tz_map_get(T *me, uint64_t key)
 	return &tz_map__vals(me)[slot];
 }
 
-TZ_STD_MAP_M bool tz_map_rm(T *me, uint64_t key)
+TZ_DS_MAP_M bool tz_map_rm(T *me, uint64_t key)
 {
 	uint32_t hash = me->hash(key),
 		 start= hash % me->max,
@@ -164,7 +164,7 @@ TZ_STD_MAP_M bool tz_map_rm(T *me, uint64_t key)
 	return true;
 }
 
-TZ_STD_MAP_M void tz_map_rehash(T *me, uint32_t max)
+TZ_DS_MAP_M void tz_map_rehash(T *me, uint32_t max)
 {
 	T old = *me;
 	tz_map__resize(me, max);
@@ -181,7 +181,7 @@ TZ_STD_MAP_M void tz_map_rehash(T *me, uint32_t max)
 	free(old.mem);
 }
 
-TZ_STD_MAP_M void tz_map_print_all(T *me)
+TZ_DS_MAP_M void tz_map_print_all(T *me)
 {
 	//struct tz_map_bucket_t *b, *bs = me->bs;
 	uint32_t max = me->max;
@@ -262,7 +262,7 @@ static inline uint32_t tz_map__mod(uint32_t i, uint32_t n)
 	return i < n? i: i-n;
 }
 
-#endif /* TZ_STD_MAP_DECLARATIONS */
+#endif /* TZ_DS_MAP_DECLARATIONS */
 #undef T
-#endif /* TZ_STD_MAP_H */
+#endif /* TZ_DS_MAP_H */
 

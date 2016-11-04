@@ -7,8 +7,8 @@ size    = ${prefix}size
 objcopy = ${prefix}objcopy
 objdump = ${prefix}objdump
 
-cflags  = -flto -g -Wall -std=c99 -I. -O2 -march=native
-ldlibs  = -flto -lm
+cflags  = -flto -g -Wall -std=c99 -I. -O0 -march=native
+ldlibs  = -flto -g -lm
 
 rule cc
   command = $cc -MMD -MF $out.d $cflags -c $in -o $out
@@ -22,14 +22,17 @@ rule ld
 
 # -----------------------------------------------------------------------------
 
-build tz_unit_test-t.o: cc tz_unit_test-t.c
-build tz_unit_test-t:   ld tz_unit_test-t.o
+build o/tz_unit_test-t.o: cc tz_unit_test-t.c
+build bin/tz_unit_test-t: ld o/tz_unit_test-t.o
 
-build tz_map-t.o: cc tz_map-t.c
-build tz_map-t:   ld tz_map-t.o
+build o/tz_map-t.o: cc tz_map-t.c
+build bin/tz_map-t: ld o/tz_map-t.o
 
-build tz_array-t.o: cc tz_array-t.c
-build tz_array-t:   ld tz_array-t.o
+build o/tz_array-t.o: cc tz_array-t.c
+build bin/tz_array-t: ld o/tz_array-t.o
 
-build tz_string-t.o: cc tz_string-t.c
-build tz_string-t:   ld tz_string-t.o
+build o/tz_string-t.o: cc tz_string-t.c
+build bin/tz_string-t: ld o/tz_string-t.o
+
+build o/tz_queue-t.o: cc tz_queue-t.c
+build bin/tz_queue-t: ld o/tz_queue-t.o

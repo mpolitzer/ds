@@ -1,7 +1,7 @@
 #define TZ_UNIT_TEST_INLINE
 #include "tz_unit_test.h"
 
-#define TZ_STD_ARRAY_INLINE
+#define TZ_DS_ARRAY_INLINE
 #include "tz_array.h"
 
 #if 0
