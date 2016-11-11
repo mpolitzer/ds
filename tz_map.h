@@ -37,17 +37,17 @@
 #define T struct tz_map_t
 typedef T tz_map;
 
-typedef uint32_t (*tz_map_hash)(uint64_t u);
-typedef bool     (*tz_map_cmp) (uint64_t u, uint64_t v);
+typedef uint32_t (*tz_map_hash)(T *me, uint64_t u);
+typedef bool     (*tz_map_eq)  (T *me, uint64_t u, uint64_t v);
 T {
 	tz_map_hash hash;
-	tz_map_cmp  cmp;
-	void *mem;
+	tz_map_eq  eq;
+	void *mem, *user;
 	uint32_t n, max;
 };
 
-TZ_DS_MAP_M void  tz_map_init   (T *me, tz_map_hash hash, tz_map_cmp cmp);
-TZ_DS_MAP_M T     tz_map_create (tz_map_hash hash, tz_map_cmp cmp);
+TZ_DS_MAP_M void  tz_map_init   (T *me, tz_map_hash hash, tz_map_eq eq);
+TZ_DS_MAP_M T     tz_map_create (tz_map_hash hash, tz_map_eq eq);
 TZ_DS_MAP_M void  tz_map_destroy(T *me);
 
 TZ_DS_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val);
@@ -68,18 +68,18 @@ static inline uint32_t tz_map__find_slot(T *me, uint64_t lookup, uint32_t s);
 static inline uint32_t tz_map__distance_to_first_empty_slot(T *me, uint32_t s);
 static inline void     tz_map__resize(T *me, uint64_t n);
 
-TZ_DS_MAP_M T tz_map_create(tz_map_hash hash, tz_map_cmp cmp)
+TZ_DS_MAP_M T tz_map_create(tz_map_hash hash, tz_map_eq eq)
 {
 	return (T){
 		.hash= hash,
-		.cmp = cmp,
+		.eq = eq,
 	};
 }
 
-TZ_DS_MAP_M void tz_map_init(T *me, tz_map_hash hash, tz_map_cmp cmp)
+TZ_DS_MAP_M void tz_map_init(T *me, tz_map_hash hash, tz_map_eq eq)
 {
 	me->hash = hash;
-	me->cmp  = cmp;
+	me->eq  = eq;
 	me->n    = 0;
 	me->max  = 0;
 }
@@ -94,7 +94,7 @@ TZ_DS_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val)
 	if (me->max == 0) {
 		tz_map__resize(me, 7);
 	}
-	uint32_t hash  = me->hash(key),
+	uint32_t hash  = me->hash(me, key),
 		 start = hash % me->max,
 		 entry = tz_map__find_slot(me, key, start);
 	if (entry--) return &tz_map__vals(me)[entry];
@@ -145,7 +145,7 @@ TZ_DS_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val)
 
 TZ_DS_MAP_M uint64_t *tz_map_get(T *me, uint64_t key)
 {
-	uint32_t hash  = me->hash(key),
+	uint32_t hash  = me->hash(me, key),
 		 start = hash % me->max;
 	uint32_t slot  = tz_map__find_slot(me, key, start);
 	if (slot-- == 0) return NULL;
@@ -154,7 +154,7 @@ TZ_DS_MAP_M uint64_t *tz_map_get(T *me, uint64_t key)
 
 TZ_DS_MAP_M bool tz_map_rm(T *me, uint64_t key)
 {
-	uint32_t hash = me->hash(key),
+	uint32_t hash = me->hash(me, key),
 		 start= hash % me->max,
 		 entry= tz_map__find_slot(me, key, start);
 	if (entry-- == 0) return false;
@@ -238,7 +238,7 @@ static inline uint32_t tz_map__find_slot(T *me, uint64_t lookup, uint32_t s)
 	while (hop_info) {
 		uint32_t nxt   = __builtin_ctzll(hop_info),
 			 entry = tz_map__mod(s+nxt, me->max);
-		if (me->cmp(tz_map__keys(me)[entry], lookup))
+		if (me->eq(me, tz_map__keys(me)[entry], lookup))
 			return entry+1;
 		hop_info &=~(1ull<<nxt);
 	}

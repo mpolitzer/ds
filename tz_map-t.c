@@ -3,12 +3,12 @@
 #define TZ_DS_MAP_INLINE
 #include "tz_map.h"
 
-uint32_t int_hash(uint64_t u)
+uint32_t int_hash(tz_map *me, uint64_t u)
 {
 	return u;
 }
 
-bool int_eq(uint64_t u, uint64_t v)
+bool int_eq(tz_map *me, uint64_t u, uint64_t v)
 {
 	return u == v;
 }
