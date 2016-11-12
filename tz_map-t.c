@@ -19,7 +19,7 @@ int main(int argc, char const* argv[])
 
 	tz_map hm = tz_map_create(int_hash, int_eq);
 
-	uint64_t err=0, n=1000000;
+	uint64_t err=0, n=atoi(argv[1]);
 
 	srand(seed);
 	for (uint64_t i=0; i<n; ++i) {
@@ -36,7 +36,7 @@ int main(int argc, char const* argv[])
 		}
 	}
 
-	printf("%lu %u\n", err, hm.max);
+	printf("%lu %lu\n", err, hm.max);
 	
 	return err;
 }

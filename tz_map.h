@@ -43,7 +43,7 @@ T {
 	tz_map_hash hash;
 	tz_map_eq  eq;
 	void *mem, *user;
-	uint32_t n, max;
+	uint64_t max;
 };
 
 TZ_DS_MAP_M void  tz_map_init   (T *me, tz_map_hash hash, tz_map_eq eq);
@@ -55,7 +55,7 @@ TZ_DS_MAP_M uint64_t *tz_map_get(T *me, uint64_t key);
 TZ_DS_MAP_M bool      tz_map_rm (T *me, uint64_t key);
 
 TZ_DS_MAP_M void     tz_map_rehash(T *me, uint32_t max);
-TZ_DS_MAP_M void     tz_map_print_all(T *me);
+TZ_DS_MAP_M void     tz_map_dump  (T *me, char *s);
 
 #ifdef TZ_DS_MAP_DECLARATIONS
 static inline uint64_t *tz_map__keys(T *me);
@@ -67,6 +67,7 @@ static inline uint32_t tz_map__mod(uint32_t i, uint32_t n);
 static inline uint32_t tz_map__find_slot(T *me, uint64_t lookup, uint32_t s);
 static inline uint32_t tz_map__distance_to_first_empty_slot(T *me, uint32_t s);
 static inline void     tz_map__resize(T *me, uint64_t n);
+static inline uint64_t tz_map__bytes (T *me, uint64_t n);
 
 TZ_DS_MAP_M T tz_map_create(tz_map_hash hash, tz_map_eq eq)
 {
@@ -80,7 +81,6 @@ TZ_DS_MAP_M void tz_map_init(T *me, tz_map_hash hash, tz_map_eq eq)
 {
 	me->hash = hash;
 	me->eq  = eq;
-	me->n    = 0;
 	me->max  = 0;
 }
 
@@ -181,53 +181,60 @@ TZ_DS_MAP_M void tz_map_rehash(T *me, uint32_t max)
 	free(old.mem);
 }
 
-TZ_DS_MAP_M void tz_map_print_all(T *me)
+TZ_DS_MAP_M void tz_map_dump(T *me, char *s)
 {
-	//struct tz_map_bucket_t *b, *bs = me->bs;
-	uint32_t max = me->max;
-
-	for (int i=0; i<max; ++i) {
-		uint64_t key = tz_map__keys(me)[i];
-		if (key) {
-			printf("%04d: %-10s: ", i, (char *)key);
-		}
-		else {
-			printf("%04d: %-10s: ", i, "");
-		}
-		//uint64_t hop = tz_map__hops(me)[i];
-		//tz_util_printb(hop);
-	}
+	printf("uint64_t %s_bytes[] = {\n", s);
+	for (size_t i=0, n=tz_map__bytes(me, me->max)/8; i<n; ++i)
+		printf(" 0x%016lx%s",
+				*((uint64_t *)me->mem + i),
+				i==n-1?"\n};\n" : (i%4==3?",\n":","));
+	printf(
+	  "tz_map %s_map = {\n"
+	  "\t.hash= %s_hash,\n"
+	  "\t.eq  = %s_eq,\n"
+	  "\t.mem = %s_bytes,\n"
+	  "\t.max = %ld,\n"
+	  "};\n"
+	  ,
+	  s, s, s, s, me->max);
 }
-
 
 /* -------------------------------------------------------------------------- */
 static inline uint64_t *tz_map__keys(T *me)
 {
-	return (uint64_t *)((uint8_t *)me->mem + (0*sizeof(uint64_t))*me->max);
-}
-
-static inline uint64_t *tz_map__vals(T *me)
-{
-	return (uint64_t *)((uint8_t *)me->mem + (1*sizeof(uint64_t))*me->max);
+	return (uint64_t *)me->mem + 0*me->max;
 }
 
 static inline uint64_t *tz_map__hops(T *me)
 {
-	return (uint64_t *)((uint8_t *)me->mem + (2*sizeof(uint64_t))*me->max);
+	return (uint64_t *)me->mem + 1*me->max;
+}
+
+static inline uint64_t *tz_map__vals(T *me)
+{
+	return (uint64_t *)me->mem + 2*me->max;
 }
 
 static inline uint64_t *tz_map__used(T *me)
 {
-	return (uint64_t *)((uint8_t *)me->mem + (3*sizeof(uint64_t))*me->max);
+	return (uint64_t *)me->mem + 3*me->max;
+}
+
+static inline uint64_t tz_map__bytes(T *me, uint64_t n)
+{
+	size_t bytes =
+		(n        * sizeof(uint64_t)) + // keys (64bits p/ entry)
+		(n        * sizeof(uint64_t)) + // hops (64bits p/ entry)
+		(n        * sizeof(uint64_t)) + // vals (64bits p/ entry)
+		((n/64+1) * sizeof(uint64_t));  // used (1bit   p/ entry)
+
+	return bytes;
 }
 
 static inline void tz_map__resize(T *me, uint64_t n)
 {
-	size_t bytes =
-		(n        * sizeof(uint64_t)) + // keys (64bits p/ entry)
-		(n        * sizeof(uint64_t)) + // vals (64bits p/ entry)
-		(n        * sizeof(uint64_t)) + // hops (64bits p/ entry)
-		((n/64+1) * sizeof(uint64_t));  // used (1bit   p/ entry)
+	size_t bytes = tz_map__bytes(me, n);
+
 	me->max = n;
 	me->mem = memset(malloc(bytes), 0, bytes);
 }
