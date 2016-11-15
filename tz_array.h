@@ -121,7 +121,7 @@ TZ_DS_ARRAY_M void *tz_array_pushn(T *me, uint32_t n);
 /* same as pushn but zeroing the new values */
 TZ_DS_ARRAY_M void *tz_array_pushnz(T *me, uint32_t n);
 
-TZ_DS_ARRAY_M void tz_array_pushn_data(T *me, uint32_t n, void *in);
+TZ_DS_ARRAY_M void *tz_array_pushn_data(T *me, uint32_t n, void *in);
 
 /* Pop n elements from the end
  *
@@ -317,10 +317,10 @@ TZ_DS_ARRAY_M void *tz_array_pushnz(T *me, uint32_t n)
 	return memset(p, 0, n * tz_array__elm_size(me));
 }
 
-TZ_DS_ARRAY_M void tz_array_pushn_data(T *me, uint32_t n, void *in)
+TZ_DS_ARRAY_M void *tz_array_pushn_data(T *me, uint32_t n, void *in)
 {
 	void *p = tz_array_pushn(me, n);
-	memcpy(p, in, n * tz_array__elm_size(me));
+	return memcpy(p, in, n * tz_array__elm_size(me));
 }
 
 TZ_DS_ARRAY_M uint32_t tz_array_popn(T *me, uint32_t n)
