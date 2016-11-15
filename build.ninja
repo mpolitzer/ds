@@ -31,6 +31,9 @@ build bin/tz_map-t: ld o/tz_map-t.o
 build o/tz_array-t.o: cc tz_array-t.c
 build bin/tz_array-t: ld o/tz_array-t.o
 
+build o/tz_queue-t.o: cc tz_queue-t.c
+build bin/tz_queue-t: ld o/tz_queue-t.o
+
 build o/tz_string-t.o: cc tz_string-t.c
 build bin/tz_string-t: ld o/tz_string-t.o
 
