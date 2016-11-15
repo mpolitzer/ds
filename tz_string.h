@@ -60,7 +60,7 @@ TZ_DS_STRING_M T tz_string_create_s(const char *s)
 	return me;
 }
 
-TZ_DS_STRING_M void tz_string_destroy  (T *me)
+TZ_DS_STRING_M void tz_string_destroy(T *me)
 {
 	tz_array_destroy(me);
 }
