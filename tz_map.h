@@ -42,7 +42,7 @@ typedef bool     (*tz_map_eq)  (T *me, uint64_t u, uint64_t v);
 T {
 	tz_map_hash hash;
 	tz_map_eq  eq;
-	void *mem, *user;
+	void *mem;
 	uint64_t max;
 };
 
@@ -145,6 +145,7 @@ TZ_DS_MAP_M uint64_t *tz_map_put(T *me, uint64_t key, uint64_t val)
 
 TZ_DS_MAP_M uint64_t *tz_map_get(T *me, uint64_t key)
 {
+	if (me->max == 0) return NULL;
 	uint32_t hash  = me->hash(me, key),
 		 start = hash % me->max;
 	uint32_t slot  = tz_map__find_slot(me, key, start);
