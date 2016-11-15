@@ -16,6 +16,8 @@ typedef struct tz_job_t {
 	void (*fn)(struct tz_job_t *me);
 } tz_job;
 
+TZ_JOBS_M void tz_job_init (tz_job *me, void (*f)(struct tz_job_t *));
+
 #ifdef T
 #error "Plese let me use T for a while..."
 #endif
@@ -24,10 +26,10 @@ typedef T {
 	tz_job *head, **tail;
 } tz_jobs;
 
-TZ_JOBS_M void tz_job_init (tz_job *me, void (*f)(struct tz_job_t *));
-TZ_JOBS_M void tz_jobs_init(tz_jobs *me);
-TZ_JOBS_M void tz_jobs_put (tz_jobs *me, tz_job *job);
-TZ_JOBS_M void tz_jobs_run (tz_jobs *me);
+TZ_JOBS_M void tz_jobs_init(T *me);
+TZ_JOBS_M void tz_jobs_put (T *me, tz_job *job);
+TZ_JOBS_M void tz_jobs_join(T *me, T *from);
+TZ_JOBS_M void tz_jobs_run (T *me);
 
 #ifdef TZ_JOBS_DECLARATIONS
 
@@ -45,11 +47,18 @@ TZ_JOBS_M void tz_jobs_init(tz_jobs *me)
 
 TZ_JOBS_M void tz_jobs_put(tz_jobs *me, tz_job *job)
 {
-	if (job->nxt != job) return;
+	//if (job->nxt != job) return;
 
 	job->nxt  = NULL;
 	*me->tail = job;
 	 me->tail =&job->nxt;
+}
+
+TZ_JOBS_M void tz_jobs_join(tz_jobs *me, tz_jobs *from)
+{
+	*me->tail = from->head;
+	 me->tail = from->tail;
+	 tz_jobs_init(from);
 }
 
 TZ_JOBS_M void tz_jobs_run(tz_jobs *me)
