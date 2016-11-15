@@ -1,5 +1,6 @@
 #ifndef TZ_DS_QUEUE_H
 #define TZ_DS_QUEUE_H
+#include <stdint.h>
 /* includes-here */
 
 #ifdef TZ_DS_QUEUE_INLINE
