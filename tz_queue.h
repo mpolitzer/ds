@@ -29,9 +29,11 @@ typedef T {
 TZ_DS_QUEUE_M void     tz_queue_init   (T *me, size_t elm_size);
 TZ_DS_QUEUE_M T        tz_queue_create (size_t elm_size);
 TZ_DS_QUEUE_M void     tz_queue_destroy(T *me);
-TZ_DS_QUEUE_M void    *tz_queue_peek   (T *me);
 TZ_DS_QUEUE_M void     tz_queue_put    (T *me, void *in);
 TZ_DS_QUEUE_M uint32_t tz_queue_get    (T *me, void *out);
+
+TZ_DS_QUEUE_M void    *tz_queue_peek   (T *me);
+TZ_DS_QUEUE_M uint32_t tz_queue_pop    (T *me);
 
 #ifdef TZ_DS_QUEUE_DECLARATIONS
 
