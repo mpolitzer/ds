@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+ninja
+for f in bin/*-t; do
+	$f
+done

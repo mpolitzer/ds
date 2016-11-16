@@ -81,7 +81,8 @@ tz_unit_test_report(void)
 TZ_UNIT_TEST_M void
 tz_unit_test_start(const char *s)
 {
-	printf("%s:\t", s);
+	int n = printf("%s:", s);
+	printf("%*.s[", 20-n, "");
 }
 
 #endif /* TZ_UNIT_TEST_DECLARATIONS */
